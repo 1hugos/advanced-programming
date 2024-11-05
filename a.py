@@ -1,6 +1,7 @@
-def display_names (list): 
-    for l in list:
-        print(l)
+def display_names(list):
+    for item in list:
+        print(item)
+
 
 list = ['Jeff', 'John', 'Mark', 'Joey', 'Andrew']
 
