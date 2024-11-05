@@ -1,5 +1,6 @@
 import requests
 
+
 class Brewery:
     def __init__(
         self,
@@ -28,7 +29,6 @@ class Brewery:
         self.latitude = latitude
         self.phone = phone
         self.website_url = website_url
-
 
     def __str__(self):
         return (
