@@ -1,3 +1,5 @@
 .vs
 .venv
+*.pyc
+tempCodeRunnerFile
 setup.cfg
