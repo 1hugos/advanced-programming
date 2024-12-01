@@ -1,6 +1,3 @@
-import requests
-
-
 class Brewery:
     def __init__(
         self,
@@ -39,31 +36,3 @@ class Brewery:
             f"Telefon: {self.phone or 'Brak danych'}\n"
             f"Strona internetowa: {self.website_url or 'Brak danych'}\n"
         )
-
-
-url = "https://api.openbrewerydb.org/v1/breweries"
-response = requests.get(url, params={'per_page': 20})
-breweries_data = response.json()
-
-breweries = []
-
-for data in breweries_data:
-    brewery = Brewery(
-        id=data.get("id"),
-        name=data.get("name"),
-        brewery_type=data.get("brewery_type"),
-        street=data.get("street"),
-        city=data.get("city"),
-        state=data.get("state"),
-        postal_code=data.get("postal_code"),
-        country=data.get("country"),
-        longitude=data.get("longitude"),
-        latitude=data.get("latitude"),
-        phone=data.get("phone"),
-        website_url=data.get("website_url")
-    )
-
-    breweries.append(brewery)
-
-for brewery in breweries:
-    print(brewery)
