@@ -1,74 +1,62 @@
+import sqlite3
 import time
 
-FILE_PATH = "tasks.txt"
+DB_PATH = "tasks.db"
 
 
-def read_all_tasks(file_path):
-    tasks = []
+def read_all_tasks(db_path):
+    result = []
 
-    with open(file_path, mode='r') as file:
-        lines = file.readlines()
-
-    for line in lines:
-        tasks.append(line.strip().split('|'))
-
-    return tasks
-
-
-def write_tasks(file_path, tasks):
-    with open(file_path, mode='w') as file:
-        for task in tasks:
-            file.write("|".join(task) + "\n")
-
-
-def update_status(file_path, tasks, task_to_update, status):
-    updated_tasks = []
+    with sqlite3.connect(db_path) as conn:
+        cursor = conn.cursor()
+        cursor.execute("SELECT id, status FROM tasks")
+        tasks = cursor.fetchall()
 
     for task in tasks:
-        if task[0] == task_to_update[0]:
-            task[1] = status
+        result.append([task[0], task[1]])
 
-        updated_tasks.append(task)
+    return result
 
-    with open(file_path, mode='w') as file:
-        for task in updated_tasks:
-            file.write("|".join(task) + "\n")
+
+def update_status(db_path, task_id, status):
+    with sqlite3.connect(db_path) as conn:
+        cursor = conn.cursor()
+        cursor.execute("UPDATE tasks SET status = ? WHERE id = ?", (status, task_id))
+        conn.commit()
 
 
 def process_task(task):
-    task[1] = "in_progress"
     print(f"Processing task {task[0]}...")
     time.sleep(30)
     print(f"Task {task[0]} done.")
 
 
-def consume_task(file_path):
+def consume_task(db_path):
     while True:
-        is_task_processed = False
-        updated_tasks = []
-        tasks = read_all_tasks(file_path=file_path)
+        all_tasks = read_all_tasks(db_path)
+        pending_tasks = []
+        tasks_on_hold = []
 
-        for task in tasks:
-            if task[1] == "pending" and not is_task_processed:
-                is_task_processed = True
-
-                update_status(
-                    file_path=file_path,
-                    tasks=tasks,
-                    task_to_update=task,
-                    status="in_progress")
-                process_task(task=task)
-
-                task[1] = "done"
+        for task in all_tasks:
+            if task[1] == "pending":
+                pending_tasks.append(task)
             elif task[1] == "in_progress":
-                process_task(task=task)
-                task[1] = "done"
+                tasks_on_hold.append(task)
 
-            updated_tasks.append(task)
+        if len(pending_tasks) > 0:
+            for task in pending_tasks:
+                update_status(db_path, task[0], 'in_progress')
+                process_task(task)
+                update_status(db_path, task[0], 'done')
+        elif len(tasks_on_hold) > 0:
+            for task in pending_tasks:
+                process_task(task)
+                update_status(db_path, task[0], 'done')
+        else:
+            print("No tasks to process.")
 
-        write_tasks(file_path=file_path, tasks=updated_tasks)
         time.sleep(5)
 
 
 if __name__ == "__main__":
-    consume_task(FILE_PATH)
+    consume_task(DB_PATH)

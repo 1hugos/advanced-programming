@@ -1,17 +1,33 @@
+import sqlite3
 import uuid
 
-FILE_PATH = "tasks.txt"
+DB_PATH = "tasks.db"
 
 
-def add_task(file_path: str):
-    task_id = uuid.uuid4()
+def initialize_db(db_path):
+    with sqlite3.connect(db_path) as conn:
+        cursor = conn.cursor()
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS tasks (
+                id TEXT PRIMARY KEY,
+                status TEXT NOT NULL
+            )
+        """)
+        conn.commit()
+
+
+def add_task(db_path):
+    task_id = str(uuid.uuid4())
     status = "pending"
 
-    with open(file_path, mode='a') as file:
-        file.write(f"{task_id}|{status}\n")
+    with sqlite3.connect(db_path) as conn:
+        cursor = conn.cursor()
+        cursor.execute("INSERT INTO tasks (id, status) VALUES (?, ?)", (task_id, status))
+        conn.commit()
 
     print(f"Added task: ID: {task_id}, Status: {status}")
 
 
 if __name__ == "__main__":
-    add_task(FILE_PATH)
+    initialize_db(DB_PATH)
+    add_task(DB_PATH)
