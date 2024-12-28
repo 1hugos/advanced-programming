@@ -27,7 +27,7 @@ def update_status(file_path, tasks, task_to_update, status):
     for task in tasks:
         if task[0] == task_to_update[0]:
             task[1] = status
-        
+
         updated_tasks.append(task)
 
     with open(file_path, mode='w') as file:
@@ -52,8 +52,13 @@ def consume_task(file_path):
             if task[1] == "pending" and not is_task_processed:
                 is_task_processed = True
 
-                update_status(file_path=file_path, tasks=tasks, task_to_update=task, status="in_progress")
+                update_status(
+                    file_path=file_path, 
+                    tasks=tasks, 
+                    task_to_update=task, 
+                    status="in_progress")
                 process_task(task=task)
+
                 task[1] = "done"
             elif task[1] == "in_progress":
                 process_task(task=task)
@@ -63,6 +68,7 @@ def consume_task(file_path):
 
         write_tasks(file_path=file_path, tasks=updated_tasks)
         time.sleep(5)
+
 
 if __name__ == "__main__":
     consume_task(FILE_PATH)
