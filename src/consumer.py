@@ -53,9 +53,9 @@ def consume_task(file_path):
                 is_task_processed = True
 
                 update_status(
-                    file_path=file_path, 
-                    tasks=tasks, 
-                    task_to_update=task, 
+                    file_path=file_path,
+                    tasks=tasks,
+                    task_to_update=task,
                     status="in_progress")
                 process_task(task=task)
 
