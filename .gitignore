@@ -1,3 +1,5 @@
 .vs
 .venv
 setup.cfg
+data/processed_img
+data/ocr_results
