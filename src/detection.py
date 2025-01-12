@@ -26,7 +26,7 @@ def detect_people(image_np, output_dir=DEFAULT_OUTPUT_DIR):
     os.makedirs(output_dir, exist_ok=True)
 
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    output_path = os.path.joins
+    output_path = os.path.join(output_dir, f"{timestamp}.png")
 
     input_tensor = tf.convert_to_tensor(image_np)[tf.newaxis, ...]
 
