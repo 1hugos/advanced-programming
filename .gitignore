@@ -1,3 +1,6 @@
 .vs
 .venv
 setup.cfg
+tasks.db
+data
+__pycache__
