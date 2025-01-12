@@ -3,28 +3,29 @@ import pika
 import json
 from detection import detect_people_from_path, detect_people_from_url
 
-RABBITMQ_HOST = 'localhost'
-QUEUE_NAME = 'people_detection_tasks'
+RABBITMQ_HOST = "localhost"
+QUEUE_NAME = "people_detection_tasks"
+
 
 def process_task(ch, method, properties, body):
     task = json.loads(body)
-    task_id = task['task_id']
-    task_type = task['type']
+    task_id = task["task_id"]
+    task_type = task["type"]
 
     try:
         print("Processing task:", task_id)
         db_manager.save_task_status(task_id, "in progress")
 
-        if task_type == 'local':
-            result = detect_people_from_path(task['image_path'])
-        elif task_type == 'url':
-            result = detect_people_from_url(task['image_url'])
-        elif task_type == 'file':
-            result = detect_people_from_path(task['image_path'])
+        if task_type == "local":
+            result = detect_people_from_path(task["image_path"])
+        elif task_type == "url":
+            result = detect_people_from_url(task["image_url"])
+        elif task_type == "file":
+            result = detect_people_from_path(task["image_path"])
         else:
             print("Processing error:", task_id)
             raise ValueError("Invalid task type")
-        
+
         print("Completed task:", task_id)
         db_manager.save_task_status(task_id, "completed", result=str(result))
     except Exception as e:

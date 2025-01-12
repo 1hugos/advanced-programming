@@ -8,20 +8,21 @@ app = Flask(__name__)
 UPLOAD_FOLDER = "../data/uploads"
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
-@app.route('/people-count-local', methods=['GET'])
+
+@app.route("/people-count-local", methods=["GET"])
 def people_count_local():
-    image_path = request.args.get('path')
+    image_path = request.args.get("path")
     if not image_path:
         return jsonify({"error": "Image path is required"}), 400
 
     task_id = send_task({"type": "local", "image_path": image_path})
-    
+
     return jsonify({"task_id": task_id}), 200
 
 
-@app.route('/people-count-url', methods=['GET'])
+@app.route("/people-count-url", methods=["GET"])
 def people_count_url():
-    image_url = request.args.get('url')
+    image_url = request.args.get("url")
     if not image_url:
         return jsonify({"error": "Image URL is required"}), 400
 
@@ -30,13 +31,13 @@ def people_count_url():
     return jsonify({"task_id": task_id}), 200
 
 
-@app.route('/people-count-file', methods=['POST'])
+@app.route("/people-count-file", methods=["POST"])
 def people_count_file():
-    if 'file' not in request.files:
+    if "file" not in request.files:
         return jsonify({"error": "No file part in the request"}), 400
-    
-    file = request.files['file']
-    if file.filename == '':
+
+    file = request.files["file"]
+    if file.filename == "":
         return jsonify({"error": "No selected file"}), 400
 
     file_path = os.path.join(UPLOAD_FOLDER, file.filename)
@@ -47,9 +48,9 @@ def people_count_file():
     return jsonify({"task_id": task_id}), 200
 
 
-@app.route('/task-status', methods=['GET'])
+@app.route("/task-status", methods=["GET"])
 def task_status():
-    task_id = request.args.get('task_id')
+    task_id = request.args.get("task_id")
     if not task_id:
         return jsonify({"error": "Task ID is required"}), 400
 
@@ -58,7 +59,7 @@ def task_status():
     return jsonify(result), 200
 
 
-@app.route('/')
+@app.route("/")
 def home():
     return "Home page"
 

@@ -9,6 +9,7 @@ MODEL_PATH = "C:/Users/spart/ssd_mobilenet_v2/saved_model"
 model = tf.saved_model.load(MODEL_PATH)
 detect_fn = model.signatures["serving_default"]
 
+
 def detect_people_from_path(image_path):
     image = utils.load_image_from_path(image_path)
 
@@ -20,11 +21,12 @@ def detect_people_from_url(image_url):
 
     return detect_people(image)
 
+
 def detect_people(image_np, output_dir=DEFAULT_OUTPUT_DIR):
     os.makedirs(output_dir, exist_ok=True)
 
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    output_path = os.path.join(output_dir, f"{timestamp}.png")
+    output_path = os.path.joins
 
     input_tensor = tf.convert_to_tensor(image_np)[tf.newaxis, ...]
 
