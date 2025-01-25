@@ -26,9 +26,14 @@ def people_count_url():
     if not image_url:
         return jsonify({"error": "Image URL is required"}), 400
 
-    task_id = send_task({"type": "url", "image_url": image_url})
+    #mock dla dodania 1000 zdjęc do kolejki
+    task_ids = []
+    for i in range(1000):
+        task_id = send_task({"type": "url", "image_url": image_url})
+        task_ids.append(task_id)
 
-    return jsonify({"task_id": task_id}), 200
+    return jsonify({"task_ids": task_ids}), 200
+    # return jsonify({"task_id": task_id}), 200
 
 
 @app.route("/people-count-file", methods=["POST"])
@@ -36,16 +41,21 @@ def people_count_file():
     if "file" not in request.files:
         return jsonify({"error": "No file part in the request"}), 400
 
-    file = request.files["file"]
-    if file.filename == "":
-        return jsonify({"error": "No selected file"}), 400
+    files = request.files.getlist("file")
 
-    file_path = os.path.join(UPLOAD_FOLDER, file.filename)
-    file.save(file_path)
+    task_ids = []
 
-    task_id = send_task({"type": "file", "image_path": file_path})
+    for file in files:
+        if file.filename == "":
+            continue
 
-    return jsonify({"task_id": task_id}), 200
+        file_path = os.path.join(UPLOAD_FOLDER, file.filename)
+        file.save(file_path)
+
+        task_id = send_task({"type": "file", "image_path": file_path})
+        task_ids.append(task_id)
+
+    return jsonify({"task_ids": task_ids}), 200
 
 
 @app.route("/task-status", methods=["GET"])
